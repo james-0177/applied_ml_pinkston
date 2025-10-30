@@ -83,3 +83,9 @@ site/
 .mypy_cache/
 .pytype/
 .cache/
+
+# ----------------------------------------
+# Lab Files
+# ----------------------------------------
+notebooks/example01/
+notebooks/example02/
