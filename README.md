@@ -28,7 +28,9 @@ Each project will be completed in its own folder.
   - ml01.ipynb - COMPLETE THIS
   - ml01.py - working script with just the code
   - README.md - instructions - modify this to present your lab project
-
+- notebooks/project02 folder:
+  - ml02_pinkston.ipynb - Titanic Dataset
+  - README.md
 ---
 
 ## WORKFLOW 1. Set Up Machine

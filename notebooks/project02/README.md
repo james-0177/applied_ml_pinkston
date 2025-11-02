@@ -82,6 +82,7 @@ titanic = sns.load_dataset('titanic')
 ```shell
 titanic.info()
 ```
+```text
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 891 entries, 0 to 890
 Data columns (total 15 columns):
@@ -104,6 +105,7 @@ Data columns (total 15 columns):
  14  alone        891 non-null    bool    
 dtypes: bool(2), category(2), float64(2), int64(4), object(5)
 memory usage: 80.7+ KB
+```
 
 1.3 Display the first 10 rows:
 ```shell
