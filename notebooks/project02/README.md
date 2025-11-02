@@ -111,6 +111,7 @@ memory usage: 80.7+ KB
 ```shell
 print(titanic.head(10))
 ```
+```text
 survived  pclass     sex   age  sibsp  parch     fare embarked   class  \
 0         0       3    male  22.0      1      0   7.2500        S   Third   
 1         1       1  female  38.0      1      0  71.2833        C   First   
@@ -134,11 +135,13 @@ survived  pclass     sex   age  sibsp  parch     fare embarked   class  \
 7  child       False  NaN  Southampton    no  False  
 8  woman       False  NaN  Southampton   yes  False  
 9  child       False  NaN    Cherbourg   yes  False
+```
 
 1.4 Check for missing values using the isnull() method and then the sum() method:
 ```shell
 titanic.isnull().sum()
 ```
+```text
 survived         0
 pclass           0
 sex              0
@@ -155,11 +158,13 @@ embark_town      2
 alive            0
 alone            0
 dtype: int64
+```
 
 1.5 Display summary statistics using the desribe() method:
 ```shell
 print(titanic.describe())
 ```
+```text
          survived      pclass         age       sibsp       parch        fare
 count  891.000000  891.000000  714.000000  891.000000  891.000000  891.000000
 mean     0.383838    2.308642   29.699118    0.523008    0.381594   32.204208
@@ -169,11 +174,13 @@ min      0.000000    1.000000    0.420000    0.000000    0.000000    0.000000
 50%      0.000000    3.000000   28.000000    0.000000    0.000000   14.454200
 75%      1.000000    3.000000   38.000000    1.000000    0.000000   31.000000
 max      1.000000    3.000000   80.000000    8.000000    6.000000  512.329200
+```
 
 1.6 Check for correlations using the corr() method and tell it to use only the numeric features:
 ```shell
 print(titanic.corr(numeric_only=True))
 ```
+```text
             survived    pclass       age     sibsp     parch      fare  \
 survived    1.000000 -0.338481 -0.077221 -0.035322  0.081629  0.257307   
 pclass     -0.338481  1.000000 -0.369226  0.083081  0.018443 -0.549500   
@@ -193,6 +200,7 @@ parch        -0.349943 -0.583398
 fare         -0.182024 -0.271832  
 adult_male    1.000000  0.404744  
 alone         0.404744  1.000000  
+```
 
 ## Create Reflection 1 for Section 1
 
