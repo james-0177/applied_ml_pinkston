@@ -64,6 +64,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
+from matplotlib.colors import ListedColormap
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.svm import SVC
@@ -407,47 +408,53 @@ Plot the decision tree model for each case.
 Case 1
 ```shell
 # Plot Decision Tree for Case 1
-fig = plt.Figure(figsize=(12, 6))
+fig = plt.figure(figsize=(12, 6))
 plot_tree(tree_model1,
           feature_names=X1.columns,
           class_names=['Not Survived', 'Survived'],
           filled=True)
 plt.title("Decision Tree - Case 1: Alone")
-plt.show()
 
 # Save image
 fig.savefig("tree_case1_alone.png")
+
+plt.show()
 ```
+![](tree_case1_alone.png)
 
 Case 2
 ``` shell
 # Plot Decision Tree for Case 2
-fig = plt.Figure(figsize=(12, 6))
+fig = plt.figure(figsize=(12, 6))
 plot_tree(tree_model2,
           feature_names=X2.columns,
           class_names=['Not Survived', 'Survived'],
           filled=True)
 plt.title("Decision Tree - Case 2: Age")
-plt.show()
 
 # Save image
 fig.savefig("tree_case2_age.png")
+
+plt.show()
 ```
+![](tree_case2_age.png)
 
 Case 3
 ```shell
 # Plot Decision Tree for Case 3
-fig = plt.Figure(figsize=(16, 8))
+fig = plt.figure(figsize=(16, 8))
 plot_tree(tree_model3,
           feature_names=X3.columns,
           class_names=['Not Survived', 'Survived'],
           filled=True)
 plt.title("Decision Tree - Case 3: Age + Family Size")
-plt.show()
 
 # Save image
 fig.savefig("tree_case3_age_family.png")
+
+plt.show()
 ```
+![](tree_case3_age_family.png)
 
 ## Section 5. Compare Alternative Models (SVC, NN)
 
@@ -559,138 +566,258 @@ print(classification_report(y3_test, y3_svc_pred))
 weighted avg       0.66      0.63      0.52       179
 ```
 
-Reflect 2.1
+### 5.2 Visualize Support Vectors (1D Case 1 and 2D Case 3)
 
-1) What patterns or anomalies do you notice? **Most passengers are between the ages of 20-40, most passengers paid a fare of 100 or less, and most Third Class passengers did not survive. Second Class survivability was nearly 50%, and a higher percentage of First Class passengers surived then did not survive.**
+We can create scatter plots to visualize support vectors. This helps understand how the SVM model separates the data. We'll use Case 1 first - but since it only has one dimension, it's kind of boring. Try to do so for Case 2 as well, but it is also only one input, and one case. Then, we'll do Case 3. Since Case 3 has two inputs, the plot has two dimensions, and our division will hopefully show a two dimensional division (like a line or margin). 
+To visualize support vectors, we follow a 3 step process. 
 
-2) Do any features stand out as potential predictors? **Higher fares correlate with First Class passengers, who had a higher survival rate. Females and children likely had a higher survival rate since females and children were allowed to board lifeboats first. Since the ship filled with water from the bottom up, lower fare passengers (as shown in the plot) had a higher chance to not survive since their berthing areas were in the lower part of the ship.**
+Step 1) Split the data into two groups:
+- Survived – Passengers who survived the Titanic sinking (value = 1).
+- Not Survived – Passengers who did not survive (value = 0).
 
-3) Are there any visible class inbalances? **Most passengers paid less than 100, which corresponds to Third Class passengers. We know from historical data not presented here that their berthing areas were near the bottom of the ship, and thus had a much lower survival rate.**
-```
+Step 2) Plot each category using different shapes and colors:
+- Yellow squares ('s') for survived passengers
+- Cyan triangles ('^') for non-survived passengers
 
-### 2.2 Handle Missing Values and Clean Data
-
-Age was missing values. We can impute missing values for age using the media:
-```shell
-titanic['age'].fillna(titanic['age'].median(), inplace=True)
-```
-
-Embark_town was missing values. We can drop missing values for embark_town (or fill with mode):
-```shell
-titanic['embark_town'].fillna(titanic['embark_town'].mode()[0], inplace=True)
-```
-
-### 2.3 Feature Engineering
-
-Create a new feature: Family size
-```shell
-titanic['family_size'] = titanic['sibsp'] + titanic['parch'] + 1
-```
-
-Convert categorical data to numeric:
-```shell
-titanic['sex'] = titanic['sex'].map({'male': 0, 'female': 1})
-titanic['embarked'] = titanic['embarked'].map({'C': 0, 'Q': 1, 'S': 2})
-```
-
-Create a binary feature for 'alone':
-```shell
-titanic['alone'] = titanic['alone'].astype(int)
-```
-
-### Create a Reflection for Section 2.3
-
-```text
-Reflection 2.3
-
-1) Why might family size be a useful feature for predicting survival? **Women and children were allowed to board the lifeboats first, and IIRC, single men were nearly the last group allowed to board the lifeboats.**
-
-2) Why convert categorical data to numeric? **Linear regression and other types of machine learning models cannot handle string labels and need numeric inputs to calculate sums, averages, probabilities, or splits.**
-```
-
-## Create Section 3 of Project 02
-
-### 3.1 Choose Features and Target
-
-- Select two or more input feature (numerical for regression, numerical and/or categorical for classification)
-- Select a target variable (as applicable)
-  - Classification: Categorical target variable (e.g., gender, species).
-  - Justify your selection with reasoning.
-
-For classification, we'll use **survived** as the target variable.
-
-Input features: age, fare, pclass, family_size
-Target: survived
-
-### 3.2 Define X and y
-
-- Assign input features to X
-- Assign target variable to y (as applicable)
+Step 3) Overlay the support vectors — the critical data points used to define the decision boundary — with black plus signs.
+- Black pluses ('+') will represent the support vectors.
+- Since the support vectors are plotted last, they appear on top of the data points and are not obscured.
 
 ```shell
-X = titanic[['age', 'fare', 'pclass', 'sex', 'family_size']]
-y = titanic['survived']
+# Visualize support vectors for Case 1 (feature = 'alone')
+
+# Create groups based on survival
+survived_alone = X1_test.loc[y1_test == 1, 'alone']
+not_survived_alone = X1_test.loc[y1_test == 0, 'alone']
+
+# Create scatter plot for survived and not survived
+plt.figure(figsize=(8, 6))
+
+plt.scatter(survived_alone, y1_test.loc[y1_test == 1], c='yellow', marker='s', label='Survived')
+plt.scatter(not_survived_alone, y1_test.loc[y1_test == 0], c='cyan', marker='^', label='Not Survived')
+
+# Overlay support vectors
+# Check if the model has support_vectors_ (it may not if it failed to converge)
+if hasattr(svc_model1, 'support_vectors_'):
+    # Get the X-values of the support vectors (only one feature in Case 1
+    support_x = svc_model1.support_vectors_[:, 0]  # First feature (alone)
+    # Plot them using a fixed Y-value (0.5) to place them between classes visually
+    # We use a larger size (s=100) and a plus symbol to make them stand out
+    plt.scatter(support_x, [0.5] * len(support_x), c='black', marker='+', s=100, label='Support Vectors')
+
+# Add labels and legend
+plt.xlabel('Alone')
+plt.ylabel('Survived (0 or 1)')
+plt.title('Support Vectors - SVC (Case 1: Alone)')
+plt.legend()
+plt.grid(True)
+plt.show()
 ```
 
-## Create a Reflection for Section 3
+### 5.3 Train and Evaluate Model (Neural Network on Case 3)
 
-```text
-Reflection 3
+Now, we'll train a Neural Network (Multi-Layer Perceptron) classifier using age and family_size as input features. This is the most informative case and gives us two continuous features to help the network learn patterns and relationships.
 
-1) Why are these features selected? **These features are numerical or have been encoded as numeric, which lends themselves to being interpreted by machine learning models. They are also relevant to survival.**
+We'll use:
 
-2) Are there any features that are likely to be highly predictive of survival? **Fare, Sex, age, and family_size are likely to be highly predictive as women and children were given priority for boarding lifeboats. Also, as we have seen with the plots, cheaper fares had an extremely low survival rate.**
-```
-
-## Create Section 4 of Project 02
-
-Split the data into training and test sets using train_split first and StratifiedShuffleSplit second. Compare.
-
-### 4.1 Basic Train/Test Split
-
+- An input (visible) layer  - with age and family size - that's two input neurons visible to us and the model.
+- Three hidden layers with decreasing sizes (50, 25, 10) - These are layers of neurons the model creates to learn patterns. Each neuron receives input from all neurons in the previous layer, applies a function, and passes the result on.
+- One output layer - a single neuron with our probability of survival (yes / no for a binary classification). 
+- The lbgfs solver which works better with small data sets like the Titanic
+- A higher number of maximum iterations (max_iter) to help it converge.
+- A fixed random_state so the work is reproducible and doesn't change each time we run it. 
+  
+Train NN on Case 3
 ```shell
-full_data = pd.concat([X, y], axis=1)
-train_set, test_set = train_test_split(full_data, test_size=0.2, random_state=123)
-print('Train Size:', len(train_set))
-print('Test Size:', len(test_set))
+# Train NN for Case 3 (age + family_size)
+nn_model3 = MLPClassifier(
+    hidden_layer_sizes=(50, 25, 10),
+    solver='lbfgs',
+    max_iter=1000,
+    random_state=42
+)
+
+nn_model3.fit(X3_train, y3_train)
+```
+
+Predict and Evaluate Neural Network Model:
+```shell
+# Predict on test data (Case 3)
+y3_nn_pred = nn_model3.predict(X3_test)
+
+# Print classification report
+print("Results for Neural Network on Test Data (Case 3 - age + family_size):")
+print(classification_report(y3_test, y3_nn_pred))
 ```
 ```text
-Train Size: 712
-Test Size: 179
+Results for Neural Network on Test Data (Case 3 - age + family_size):
+              precision    recall  f1-score   support
+
+           0       0.70      0.78      0.74       110
+           1       0.57      0.46      0.51        69
+
+    accuracy                           0.66       179
+   macro avg       0.64      0.62      0.63       179
+weighted avg       0.65      0.66      0.65       179
 ```
 
-### 4.2 Stratified Train/Test Split
+Plot Confusion Matrix:
+```shell
+# Create confusion matrix
+cm_nn3 = confusion_matrix(y3_test, y3_nn_pred)
+
+# Plot heatmap
+sns.heatmap(cm_nn3, annot=True, cmap='Blues')
+plt.title('Confusion Matrix - Neural Network (Case 3)')
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.show()
+```
+
+### 5.4 Visualize (Neural Network on Case 3)
+
+We can visualize the learned decision boundary of the neural network - the way it separates the two target classes into survived and not-survived. Since we have two features (age and family_size), we can create a 2D plot showing how the model predicts across different combinations of those features.
+
+This is a great way to visualize decision boundaries — regions where the model switches from predicting not-survived to survived.
 
 ```shell
-splitter = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=123)
+# Get the range of our two features - use padding to enhance appearance
+padding = 1
+x_min, x_max = X3['age'].min() - padding, X3['age'].max() + padding
+y_min, y_max = X3['family_size'].min() - padding, X3['family_size'].max() + padding
 
-for train_indices, test_indices in splitter.split(X, y):
-    train_set = X.iloc[train_indices]
-    test_set = X.iloc[test_indices]
-print('Train Size:', len(train_set))
-print('Test Size:', len(test_set))
+# Create a meshgrid (all combinations of age and family_size)
+
+# A grid of values covering the entire input space
+# np.linspace(start, stop, num) generates evenly spaced values (like a ruler)
+# Here, we create 500 points between min and max for each axis
+# np.meshgrid creates a coordinate grid from the two arrays
+xx, yy = np.meshgrid(np.linspace(x_min, x_max, 500), 
+                     np.linspace(y_min, y_max, 500))
+
+# Flatten the grid arrays and prepare them for prediction
+# np.c_ stacks the flattened xx and yy into coordinate pairs
+# .ravel() flattens a 2D array into 1D (required by the model for prediction)
+Z = nn_model3.predict(np.c_[xx.ravel(), yy.ravel()])
+
+# Reshape the predicted results to match the original 2D grid shape
+Z = Z.reshape(xx.shape)
+
+# Plot the decision surface (background) showing predicted survival zones
+# Blue for 0, yellow for 1 - change this up as you like
+plt.figure(figsize=(10, 7))
+cmap_background = ListedColormap(['lightblue', 'lightyellow'])
+plt.contourf(xx, yy, Z, cmap=cmap_background, alpha=0.7)
+
+# Overlay the actual test data points for visual comparison
+# Plot passengers who did NOT survive (0) as blue triangles
+plt.scatter(X3_test['age'][y3_test == 0],
+            X3_test['family_size'][y3_test == 0],
+            c='blue', marker='^', edgecolor='k', label='Not Survived')
+
+# Plot passengers who DID survive (1) as gold squares
+plt.scatter(X3_test['age'][y3_test == 1],
+            X3_test['family_size'][y3_test == 1],
+            c='gold', marker='s', edgecolor='k', label='Survived')
+
+# Add axis labels, title, legend, and grid
+plt.xlabel('Age')
+plt.ylabel('Family Size')
+plt.title('Neural Network Decision Surface - Case 3')
+plt.legend()
+plt.grid(True)
+plt.show()
 ```
-```text
-Train Size: 712
-Test Size: 179
-```
 
-### 4.3 Compare Results
+### Other
 
+Train NN on Case 1 and Case 2 (for completing summary table)
 ```shell
-print("Original Class Distribution:\n", y.value_counts(normalize=True))
-print("Train Set Class Distribution:\n", train_set['pclass'].value_counts(normalize=True))
-print("Test Set Class Distribution:\n", test_set['pclass'].value_counts(normalize=True))
+# Train NN for Case 1 (alone)
+nn_model1 = MLPClassifier(
+    hidden_layer_sizes=(50, 25, 10),
+    solver='lbfgs',
+    max_iter=1000,
+    random_state=42
+)
+
+nn_model1.fit(X1_train, y1_train)
+
+# Train NN for Case 2 (age)
+nn_model2 = MLPClassifier(
+    hidden_layer_sizes=(50, 25, 10),
+    solver='lbfgs',
+    max_iter=1000,
+    random_state=42
+)
+
+nn_model2.fit(X2_train, y2_train)
 ```
 
-## Create a Reflection for Section 4
+Predict and Evaluate Neural Network Model (Case 1):
+```shell
+# Predict on test data (Case 1)
+y1_nn_pred = nn_model1.predict(X1_test)
 
+# Print classification report
+print("Results for Neural Network on Test Data (Case 1 - alone):")
+print(classification_report(y1_test, y1_nn_pred))
+```
 ```text
-Reflection 4
+Results for Neural Network on Test Data (Case 1 - alone):
+              precision    recall  f1-score   support
 
-1) Why might stratification improve model performance? **Train/test sets better reflect the true class balance.**
+           0       0.71      0.65      0.68       110
+           1       0.51      0.58      0.54        69
 
-2) How close are the training and test distributions to the original dataset? **Train and test sets are reasonably close to the original dataset, though minor differences exist.**
-
-3) Which split method produced better class balance? **The stratified split is better because it preserves the original distribution in both train and test sets. The basic split is random, so the train/test sets could have slightly distored distributions.**
+    accuracy                           0.63       179
+   macro avg       0.61      0.62      0.61       179
+weighted avg       0.64      0.63      0.63       179
 ```
+
+Predict and Evaluate Neural Network Model (Case 2):
+```shell
+# Predict on test data (Case 2)
+y2_nn_pred = nn_model2.predict(X2_test)
+
+# Print classification report
+print("Results for Neural Network on Test Data (Case 2 - age):")
+print(classification_report(y2_test, y2_nn_pred))
+```
+```text
+Results for Neural Network on Test Data (Case 2 - age):
+              precision    recall  f1-score   support
+
+           0       0.63      0.98      0.77       110
+           1       0.71      0.07      0.13        69
+
+    accuracy                           0.63       179
+   macro avg       0.67      0.53      0.45       179
+weighted avg       0.66      0.63      0.52       179
+```
+
+## Section 6. Final Thoughts & Insights
+
+1. Summarize Findings
+
+| Model Type | Case | Features Used | Accuracy | Precision | Recall | F1-Score | Notes |
+|------------|------|---------------|----------|-----------|--------|-----------|-------|
+| Decision Tree | Case 1 | alone | 63.00% | 64.00% | 63.00% | 63.00% | - |
+|                   | Case 2 | age | 61.00% | 58.00% | 61.00% | 55.00% | - |
+|                   | Case 3 | age + family_size | 59.00% | 57.00% | 59.00% | 57.00% | - |
+|-------------------|------|---------------|----------|-----------|--------|-----------|-------|
+| SVM (RBF Kernel)| Case 1 | alone | 63.00% | 64.00% | 63.00% | 63.00% | - |
+|                    | Case 2 | age | 63.00% | 66.00% | 63.00% | 52.00% | - |
+|                    | Case 3 | age + family_size | 63.00% | 66.00% | 63.00% | 52.00% | - |
+|-------------------|------|---------------|----------|-----------|--------|-----------|-------|
+| Neural Network (MLP) | Case 1 | alone | 63.00% | 64.00% | 63.00% | 63.00% | - |
+|                    | Case 2 | age | 63.00% | 66.00% | 63.00% | 52.00% | - |
+|                    | Case 3 | age + family_size | 66.00% | 65.00% | 66.00% | 65.00% | - |
+
+2. Discuss Challenges Faced
+
+**This project took a lot longer than I anticipated, and really more time than I typically have available. It makes me extremely worried about the Midterm because since that's a Week 4 assignment, I haven't started it yet. Other than that there weren't really that many challenges. It just took a lot of time.**
+
+3. Next steps to gain more insights and/or to explore classification models
+
+**I don't see myself using any of these models in the future, mostly because my trajectory over the next few years won't include using any of them. It's been interesting learning about them though.**
