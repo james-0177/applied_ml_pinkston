@@ -81,21 +81,21 @@ notebooks/project04/ml04_pinkston.ipynb
 
 ### Evaluation
 
-Linear R²: 0.191
-Linear RMSE: 34.21
-Linear MAE: 21.97
+Linear R²: 0.191  
+Linear RMSE: 34.21  
+Linear MAE: 21.97  
 
-Ridge R²: 0.191
-Ridge RMSE: 34.21
-Ridge MAE: 21.97
+Ridge R²: 0.191  
+Ridge RMSE: 34.21  
+Ridge MAE: 21.97  
 
-ElasticNet R²: 0.155
-ElasticNet RMSE: 34.96
-ElasticNet MAE: 22.63
+ElasticNet R²: 0.155  
+ElasticNet RMSE: 34.96  
+ElasticNet MAE: 22.63  
 
-Polynomial R²: -0.003
-Polynomial RMSE: 38.10
-Polynomial MAE: 25.30
+Polynomial R²: -0.003  
+Polynomial RMSE: 38.10  
+Polynomial MAE: 25.30  
 
 ## Final Thoughts & Insights
 
