@@ -12,4 +12,4 @@ Projects index:
 - [**Project 01: California Housing Price Prediction**](project01/README.md)
 - [**Project 02: Working with the Titanic Dataset**](project02/README.md)
 - [**Project 03: Building a Classifier (Titanic)**](project03/README.md)
-- [**Project 04: Title Here**](project04/README.md)
+- [**Project 04: Predicting a Continuous Target with Regression (Titanic)**](project04/README.md)
