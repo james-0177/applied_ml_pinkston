@@ -50,73 +50,45 @@ notebooks/project05/ensemble_pinkston.ipynb
 
 - Source: <a href="https://archive.ics.uci.edu/ml/datasets/Wine+Quality" target="_blank">Wine Quality Dataset</a>
 - Key Features: fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides, free_sulfur_dioxide, total_sulfur_dioxide, density, pH, sulphates, alcohol, quality, color
-- Target Variable: 
+- Target Variable: quality_numeric
 
-### Data Exploration
+### Data Preparation and Feature Engineering
 
-- Missing values imputed:
-  - age - median
-- Drop rows with missing data
-- Categorical variables encoded numerically
-  - sex:  male = 0, female = 1
-  - alone
-
-### Feature Engineering
-
-- Create Numeric Feature:  family_size = sibsp + parch + 1
+- Assign the quality data a string based on the quality score (q)
+  - low: q <=4
+  - medium: q <= 6
+  - high: q > 6
+- Split the quality column into two new columns based on previous results
+  - quality_label: low, medium, high
+  - quality_numeric: low = 0, medium = 1, high = 2
 
 ### Feature Selection and Justification
 
-- Case 1. age
-- Case 2. family_size
-- Case 3. age + family_size
-- Case 4. sex + alone
+- Drop all columns except quality and the newly created quality_label and quality_numeric columns
+- Features (X) = quality, quality_label, quality_numeric
+- Target (y) = quality_numeric
 
-### Regression Models
+### Ensemble Models
 
-1. Linear Regression
-2. Ridge Regression
-3. Elastic Net
-4. Polynomial Regression
+1. Random Forest
+2. MLP Classifier
 
-### Evaluation
+## Evaluation
 
-Linear R²: 0.191  
-Linear RMSE: 34.21  
-Linear MAE: 21.97  
+### Summary of All Models
 
-Ridge R²: 0.191  
-Ridge RMSE: 34.21  
-Ridge MAE: 21.97  
+| Model               | Train Accuracy | Test Accuracy | Train F1   | Test F1   | Accuracy Gap | F1 Gap    |
+|--------------------|----------------|---------------|------------|-----------|--------------|-----------|
+| Random Forest (100)| 1.0000         | 0.8875        | 1.0000     | 0.8661    | 0.1125       | 0.1339    |
+| MLP Classifier     | 0.8514         | 0.8438        | 0.8141     | 0.8073    | 0.0077       | 0.0068    |
+  
 
-ElasticNet R²: 0.155  
-ElasticNet RMSE: 34.96  
-ElasticNet MAE: 22.63  
+## Conclusions and Insights
 
-Polynomial R²: -0.003  
-Polynomial RMSE: 38.10  
-Polynomial MAE: 25.30  
+1. Project Summary:  <span style="color:darkgreen;">**In this analysis, we evaluated two machine learning models — Random Forest and Multi-Layer Perceptron (MLP) classifiers — to predict red wine quality. We measured model performance using both accuracy and weighted F1 score on the training and test datasets, and calculated gaps to assess overfitting.**</span>
 
-## Final Thoughts & Insights
+2. Performance Trends:  <span style="color:darkgreen;">**The Random Forest classifier achieved the highest test accuracy at 88.75%, but also showed a notable training/test gap (11.25%), indicating some overfitting. In contrast, the MLP classifier had slightly lower test accuracy (84.38%) but a much smaller accuracy gap (0.76%), suggesting more stable generalization.**</span>
 
-### Summarize Findings
+3. Insights on Why Models Behave Differently:  <span style="color:darkgreen;">**Tree-based models, like Random Forest, perform well on this dataset because they capture non-linear relationships and interactions between wine chemical properties, but they can overfit when too many trees or deep splits are used. Neural networks, such as MLP, tend to generalize more consistently and handle complex patterns, though they may require careful tuning and more data to reach peak accuracy.**</span>
 
-1. What features were most useful?  <span style="color:darkgreen;">**Case 4 (sex and alone) were the most useful features that I tested.**</span>
-
-2. What regression model performed best?  <span style="color:darkgreen;">**Both the Linear Regression Model and the Ridge Model performed the best as they had the same results.**</span>
-
-3. How did model complexity or regularization affect results?  <span style="color:darkgreen;">**Model complexity (using age) did not perform better, but that was mainly due to age being a nearly useless predictor.**</span>
-
-### Challenges
-
-1. Was fare hard to predict? Why?  <span style="color:darkgreen;">**Yes, mostly due to the features that were selected. Age was nearly useless, and quite possibly the worst predictor. Pclass would have been much better, but was not chosen, even for the custom Case 4.**</span>
-
-2. Did skew or outliers impact the models?  <span style="color:darkgreen;">**Yes. A few passengers paid very high fares. Outliers can make R^2 and RMSE misleading.**</span>
-
-### Optional Next Steps
-
-1. Try different features besides the ones used (e.g., pclass, sex if you didn't use them this time):  <span style="color:darkgreen;">**Pclass would probably be the best feature to use for a fare prediction model.**</span>
-
-2. Try predicting age instead of fare:  <span style="color:darkgreen;">**Age would have a much different correlation structure, features useful would probably be sex, pclass, and family_size.**</span>
-
-3. Explore log transformation of fare to reduce skew:  <span style="color:darkgreen;">**This would probably greatly help the prediction model as it compresses large values, reducing the difference between extreme and typical fares.**</span>
+4. Next Steps:  <span style="color:darkgreen;">**While this project focused on using 2 of the 9 models, I think when working on a professional team, it would be prudent to use as many models as possible, and then compare them together as a team. The team could then decide on which model's (models') results to use when presenting their findings to the project shareholders.**</span>
