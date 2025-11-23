@@ -55,12 +55,12 @@ notebooks/project05/ensemble_pinkston.ipynb
 ### Data Preparation and Feature Engineering
 
 - Assign the quality data a string based on the quality score (q)
--- low: q <=4
--- medium: q <= 6
--- high: q > 6
+  - low: q <=4
+  - medium: q <= 6
+  - high: q > 6
 - Split the quality column into two new columns based on previous results
--- quality_label: low, medium, high
--- quality_numeric: low = 0, medium = 1, high = 2
+  - quality_label: low, medium, high
+  - quality_numeric: low = 0, medium = 1, high = 2
 
 ### Feature Selection and Justification
 
